@@ -1,0 +1,66 @@
+class PageTable:
+    def init(self, num_pages):
+        self.num_pages = num_pages
+        self.page_table = [-1] * num_pages  # Initialize all pages as not in memory
+
+    def page_fault(self, page_num):
+        # Simulate page fault by loading the page into memory
+        print(f"Page fault: Loading page {page_num} into memory")
+        self.page_table[page_num] = page_num
+
+    def access_memory(self, page_num):
+        if self.page_table[page_num] == -1:
+            self.page_fault(page_num)
+        print(f"Accessing page {page_num} from memory")
+
+
+class MemoryManager:
+    def init(self, memory_size):
+        self.memory_size = memory_size
+        self.memory = [None] * memory_size
+
+    def load_page_into_memory(self, page_num, data):
+        # Simulate loading page into memory
+        print(f"Loading page {page_num} into memory")
+        self.memory[page_num] = data
+
+    def retrieve_page_from_memory(self, page_num):
+        # Simulate retrieving page from memory
+        print(f"Retrieving page {page_num} from memory")
+        return self.memory[page_num]
+
+
+class Process:
+    def init(self, pid, pages):
+        self.pid = pid
+        self.pages = pages  # Pages the process will access
+
+    def execute(self, memory_manager, page_table):
+        for page_num in self.pages:
+            page_table.access_memory(page_num)
+            if memory_manager.retrieve_page_from_memory(page_num) is None:
+                # Simulate swapping page from secondary storage
+                memory_manager.load_page_into_memory(page_num, f"Data for page {page_num}")
+
+
+def main():
+    num_pages = int(input("Enter the number of pages: "))
+    page_table = PageTable(num_pages)
+
+    memory_size = int(input("Enter the size of the memory: "))
+    memory_manager = MemoryManager(memory_size)
+
+    num_processes = int(input("Enter the number of processes: "))
+    processes = []
+    for i in range(num_processes):
+        pages = list(map(int, input(f"Enter pages for process {i + 1}: ").split()))
+        processes.append(Process(pid=i + 1, pages=pages))
+
+    # Execute processes
+    for process in processes:
+        print(f"Executing Process {process.pid}:")
+        process.execute(memory_manager, page_table)
+        print()
+
+if name == "main":
+    main()
